@@ -478,6 +478,7 @@ class Level():
         self.world_shift = 0
 
         self.pipeFound = False
+        self.pipeEntering = False
 
         #score from various things (ex. collecting coins)
         self.score = 0
@@ -742,9 +743,18 @@ def main():
         if level_list[current_level_no].pipeFound == True:
             pipe_hit_list = pygame.sprite.spritecollide(player, level_list[current_level_no].pipe_list, False)
             for pipe in pipe_hit_list:
-                player.rect.x = pipe.rect.x + ((pipe.rect.right - pipe.rect.left) / 2) - ((player.rect.right - player.rect.left) / 2)
+                pipeCenter = pipe.rect.x + ((pipe.rect.right - pipe.rect.left) / 2) - ((player.rect.right - player.rect.left) / 2)
+                if player.rect.x != pipeCenter:
+                    if (pipeCenter - player.rect.x) < 0:
+                        player.rect.x -= 1
+                    elif (pipeCenter - player.rect.x) > 0:
+                        player.rect.x += 1
+               # else:
+                #    level_list[current_level_no].pipeEntering = True
 
-        if player.anim_f < 60 and level_list[current_level_no].pipeFound == True:
+
+
+        if player.anim_f < 60 and level_list[current_level_no].pipeFound == True :
             player.rect.y += 1
             player.anim_f += 1
             timeStop = True
@@ -753,6 +763,7 @@ def main():
             player.anim_f = 0
             timeStop = False
             level_list[current_level_no].pipeFound = False
+            #level_list[current_level_no].pipeEntering = False
             player.rect.y -= 100
  
         # If the player gets near the right side, shift the world left (-x)
