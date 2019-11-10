@@ -204,7 +204,7 @@ class Player(pygame.sprite.Sprite):
     def enterPipe(self, direction):
         if direction == 'down':
             self.rect.y += 2
-            pipe_hit_list = (self, self.level.pipe_list, False)
+            pipe_hit_list = pygame.sprite.spritecollide(self, self.level.pipe_list, False)
             self.rect.y -= 2
             if len(pipe_hit_list) > 0:
                 self.level.pipeFound = True
@@ -698,8 +698,8 @@ def main():
     timeStop = False
     
     #music
-    pygame.mixer.music.load('overworld.mp3')
-    pygame.mixer.music.play(-1, 0)
+    #pygame.mixer.music.load('overworld.mp3')
+    #pygame.mixer.music.play(-1, 0)
     
     # Loop until the user clicks the close button.
     done = False
@@ -738,7 +738,12 @@ def main():
         # Update items in the level
         current_level.update()
 
-        
+        # player entering pipe animation
+        if level_list[current_level_no].pipeFound == True:
+            pipe_hit_list = pygame.sprite.spritecollide(player, level_list[current_level_no].pipe_list, False)
+            for pipe in pipe_hit_list:
+                player.rect.x = pipe.rect.x + ((pipe.rect.right - pipe.rect.left) / 2) - ((player.rect.right - player.rect.left) / 2)
+
         if player.anim_f < 60 and level_list[current_level_no].pipeFound == True:
             player.rect.y += 1
             player.anim_f += 1
